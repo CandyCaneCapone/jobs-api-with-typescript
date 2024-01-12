@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import NotFoundError from "../errors/not-found";
+import mongoose from "mongoose";
 
 const errorHandler = (
   err: Error,
@@ -15,6 +16,11 @@ const errorHandler = (
         statusCode = err.statusCode
     }
 
+    if (err instanceof mongoose.Error.CastError) {
+        message = `no task found with id ${err.value}`
+        statusCode = 404 
+    }
+    
     res.status(statusCode).json({
         error : {
             message
