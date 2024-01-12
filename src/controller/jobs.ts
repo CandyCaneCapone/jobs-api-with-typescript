@@ -50,22 +50,37 @@ const editJob = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const jobId : string = req.params.id
-    const job = await Job.findByIdAndUpdate(jobId , req.body , {
-        runValidators : true , 
-        new : true 
-    }) 
+    const jobId: string = req.params.id;
+    const job = await Job.findByIdAndUpdate(jobId, req.body, {
+      runValidators: true,
+      new: true,
+    });
 
     if (!job) {
-        throw new NotFoundError(`no job found with id ${jobId}`)
+      throw new NotFoundError(`no job found with id ${jobId}`);
     }
 
-    res.json({job})
-
+    res.json({ job });
   } catch (error) {
     next(error);
   }
 };
-const deleteJob = (req: Request, res: Response, next: NextFunction): void => {};
+const deleteJob = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const jobId: string = req.params.id;
+    const job = await Job.findByIdAndDelete(jobId);
+
+    if (!job) {
+      throw new NotFoundError(`no job found with id ${jobId}`);
+    }
+    res.json({ job });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export { getAllJobs, getSingleJob, createJob, editJob, deleteJob };
