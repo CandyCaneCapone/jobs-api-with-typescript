@@ -27,12 +27,19 @@ const getSingleJob = async (
       throw new NotFoundError(`no job found with id ${jobId}`);
     }
 
-    res.json({job})
+    res.json({ job });
   } catch (error) {
     next(error);
   }
 };
-const createJob = (req: Request, res: Response, next: NextFunction): void => {};
+const createJob = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const job = await Job.create(req.body)
+    res.status(201).json({job})
+  } catch (error) {
+    next(error);
+  }
+};
 const editJob = (req: Request, res: Response, next: NextFunction): void => {};
 const deleteJob = (req: Request, res: Response, next: NextFunction): void => {};
 

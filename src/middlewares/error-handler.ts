@@ -7,26 +7,32 @@ const errorHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-):void => {
-    let message : string = "Something went wrong"
-    let statusCode : number = 500
+): void => {
+  let message: string = "Something went wrong";
+  let statusCode: number = 500;
 
-    if (err instanceof NotFoundError) {
-        message = err.message 
-        statusCode = err.statusCode
-    }
+  if (err instanceof NotFoundError) {
+    message = err.message;
+    statusCode = err.statusCode;
+  }
 
-    if (err instanceof mongoose.Error.CastError) {
-        message = `no task found with id ${err.value}`
-        statusCode = 404 
-    }
-    
-    res.status(statusCode).json({
-        error : {
-            message
-        }
-    })
+  if (err instanceof mongoose.Error.CastError) {
+    message = `no task found with id ${err.value}`;
+    statusCode = 404;
+  }
+
+  if (err instanceof mongoose.Error.ValidationError) {
+    message = Object.values(err.errors)
+      .map((item) => item.message)
+      .join(",");
+    statusCode = 400;
+  }
+
+  res.status(statusCode).json({
+    error: {
+      message,
+    },
+  });
 };
 
-
-export default errorHandler ; 
+export default errorHandler;
